@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+## set up Python env
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+## get the came
+curl https://nostarch.com/download/escape.zip --output escape.zip
+unzip escape.zip

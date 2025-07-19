@@ -14,10 +14,14 @@
   ## development
   programs = {
     direnv.enable = true;
-    # This should default by whether there is a .git file/dir (and whether it’s
-    # a file (worktree) or dir determines other things – like where hooks
-    # are installed.
-    git.enable = true;
+    git = {
+      enable = true;
+      ignores = [
+        ## The directory created when we run `unpackPhase` in the default dev
+        ## shell.
+        "/source"
+      ];
+    };
   };
 
   ## formatting

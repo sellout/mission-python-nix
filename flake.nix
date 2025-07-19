@@ -24,9 +24,11 @@
 
     supportedSystems = import systems;
 
-    localPackages = pkgs: pypkgs: {
-      pgzero = pypkgs.callPackage ./packages/pgzero.nix {};
-    };
+    localPackages = {
+      pkgs,
+      python3Packages ? pkgs.python3Packages,
+    }:
+      import ./packages {inherit python3Packages;};
   in
     {
       schemas = {
@@ -62,7 +64,13 @@
         };
 
         python = final: prev: pyfinal: pyprev: {
-          inherit (localPackages final pyfinal) pgzero;
+          inherit
+            (localPackages {
+              pkgs = final;
+              python3Packages = pyfinal;
+            })
+            pgzero
+            ;
         };
       };
 
@@ -91,7 +99,9 @@
 
       src = pkgs.lib.cleanSource ./.;
     in {
-      packages = localPackages pkgs pkgs.python3Packages;
+      packages =
+        localPackages {inherit pkgs;}
+        // {default = self.packages.${system}.escape;};
 
       projectConfigurations =
         flaky.lib.projectConfigurations.nix {inherit pkgs self;};
@@ -99,9 +109,23 @@
       devShells =
         self.projectConfigurations.${system}.devShells
         // {
-          default = import ./shell.nix {
-            pkgs = pkgs.appendOverlays [self.overlays.default];
-          };
+          default = self.devShells.${system}.escape;
+
+          escape = self.packages.${system}.escape.overrideAttrs (old: {
+            nativeBuildInputs =
+              old.nativeBuildInputs
+              ++ [
+                ## This gives us a Python with tkinter, so we can use IDLE, as
+                ## recommeded by the book.
+                pkgs.python3Full
+              ];
+
+            shellHook = ''
+              if [ ! -d source ]; then
+                unpackPhase
+              fi
+            '';
+          });
         };
 
       checks = self.projectConfigurations.${system}.checks;

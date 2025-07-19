@@ -4,7 +4,7 @@
 
 A Nix environment for working through _Mission Python_
 
-_Mission Python_ is a book for learning Python through a series of game implementations. This prevides a Nix environment for the book’s exercises.
+[_Mission Python_](https://nostarch.com/missionpython) is a book for learning [Python](https://www.python.org/) through a series of game implementations. This prevides a [Nix](https://nixos.org/) environment for the book’s exercises.
 
 ## development environment
 
@@ -24,15 +24,13 @@ This command ensures that any work you do within this repository happens within 
 
 If you don’t have direnv installed, you can instead manually run `nix develop` to get into the _Mission Python_ environment.
 
-### `nix-shell`
-
-If you don’t use Nix flakes, you can also run `nix-shell` to get into the _Mission Python_ environment.
-
 ## building & development
 
-From here, you should be able to follow through the book as written.
+Once you are in the environment, you should be able to `cd source` and then follow through the book as written.
 
-To run the IDLE editor, as it recommends, you can do
+If there is no “source” directory, then you can manually run `unpackPhase` to create it.
+
+To run the IDLE editor, as the book recommends, you can do
 
 ```bash
 idle &

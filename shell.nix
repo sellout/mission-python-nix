@@ -1,24 +1,15 @@
-{
-  pkgs ? import <nixpkgs> { },
-}:
-
+{pkgs ? import <nixpkgs> {}}:
 pkgs.mkShell {
   packages = [
-    pkgs.python3Full
+    (pkgs.python3Full.withPackages (pypkgs: [pypkgs.pgzero]))
     pkgs.unzip
   ];
 
-  LD_LIBRARY_PATH = pkgs.lib.concatStringsSep ":" [
-    "$LD_LIBRARY_PATH"
-    "${pkgs.glib.out}/lib"
-    "${pkgs.libgcc.lib}/lib"
-    "${pkgs.libz.out}/lib"
-  ];
-
   shellHook = ''
-    if [ -f .venv/bin/activate ]
-    then source .venv/bin/activate
-    else source ./setup
+    if [ ! -f escape.zip ]; then
+      ## get the game
+      curl https://nostarch.com/download/escape.zip --output escape.zip
+      unzip escape.zip
     fi
   '';
 }

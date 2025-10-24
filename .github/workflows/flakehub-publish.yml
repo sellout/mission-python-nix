@@ -23,5 +23,5 @@ jobs:
       - uses: "DeterminateSystems/flakehub-push@main"
         with:
           visibility: "public"
-          name: "sellout/mission-python"
+          name: "sellout/mission-python-nix"
           tag: "${{ inputs.tag }}"

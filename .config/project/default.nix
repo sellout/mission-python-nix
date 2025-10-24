@@ -4,7 +4,7 @@
   ...
 }: {
   project = {
-    name = "mission-python";
+    name = "mission-python-nix";
     summary = "A Nix environment for working through “Mission Python”";
   };
 
@@ -38,6 +38,9 @@
   ## publishing
   services = {
     flakehub.enable = true;
-    github.enable = true;
+    github = {
+      enable = true;
+      settings.repository.topics = ["educational" "python" "book"];
+    };
   };
 }

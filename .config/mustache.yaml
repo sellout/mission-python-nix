@@ -2,7 +2,7 @@
   "project":
     {
       "description": "“Mission Python” is a book for learning Python through a series of game implementations. This prevides a Nix environment for the book’s exercises.",
-      "name": "mission-python",
+      "name": "mission-python-nix",
       "repo": "sellout/mission-python-nix",
       "summary": "A Nix environment for working through “Mission Python”",
     },

@@ -4,7 +4,7 @@
   ...
 }: {
   project = {
-    name = "mission-python";
+    name = "mission-python-nix";
     summary = "A Nix environment for working through “Mission Python”";
   };
 

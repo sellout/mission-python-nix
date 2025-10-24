@@ -27,7 +27,7 @@
     self,
     systems,
   }: let
-    pname = "mission-python";
+    pname = "mission-python-nix";
 
     supportedSystems = import systems;
 

@@ -38,6 +38,9 @@
   ## publishing
   services = {
     flakehub.enable = true;
-    github.enable = true;
+    github = {
+      enable = true;
+      settings.repository.topics = ["educational" "python" "book"];
+    };
   };
 }

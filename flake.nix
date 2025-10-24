@@ -2,11 +2,18 @@
   description = "A Nix environment for working through “Mission Python”";
 
   nixConfig = {
+    ## NB: This is a consequence of using `self.pkgsLib.runEmptyCommand`, which
+    ##     allows us to sandbox derivations that otherwise can’t be.
+    allow-import-from-derivation = true;
     ## https://github.com/NixOS/rfcs/blob/master/rfcs/0045-deprecate-url-syntax.md
     extra-experimental-features = ["no-url-literals"];
-    extra-substituters = ["https://cache.garnix.io"];
+    extra-substituters = [
+      "https://cache.garnix.io"
+      "https://sellout.cachix.org"
+    ];
     extra-trusted-public-keys = [
       "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
+      "sellout.cachix.org-1:v37cTpWBEycnYxSPAgSQ57Wiqd3wjljni2aC0Xry1DE="
     ];
     ## Isolate the build.
     sandbox = "relaxed";
@@ -103,17 +110,22 @@
         localPackages {inherit pkgs;}
         // {default = self.packages.${system}.escape;};
 
-      projectConfigurations =
-        flaky.lib.projectConfigurations.nix {inherit pkgs self;};
+      projectConfigurations = flaky.lib.projectConfigurations.nix {
+        inherit pkgs self supportedSystems;
+      };
 
       devShells =
         self.projectConfigurations.${system}.devShells
         // {
-          default = self.devShells.${system}.escape;
+          default = self.devShells.${system}.escape.overrideAttrs (old: {
+            nativeBuildInputs =
+              old.nativeBuildInputs or []
+              ++ [self.projectConfigurations.${system}.config.project.packages.path];
+          });
 
           escape = self.packages.${system}.escape.overrideAttrs (old: {
             nativeBuildInputs =
-              old.nativeBuildInputs
+              old.nativeBuildInputs or []
               ++ [
                 ## This gives us a Python with tkinter, so we can use IDLE, as
                 ## recommeded by the book.
@@ -135,9 +147,10 @@
   inputs = {
     ## Flaky should generally be the source of truth for its inputs.
     flaky.url = "github:sellout/flaky";
-
-    flake-utils.follows = "flaky/flake-utils";
     nixpkgs.follows = "flaky/nixpkgs";
-    systems.follows = "flaky/systems";
+
+    ## Pygame seems to not compile on i686-linux.
+    flake-utils.url = "github:numtide/flake-utils";
+    systems.follows = "flake-utils/systems";
   };
 }

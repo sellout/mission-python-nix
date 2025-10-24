@@ -33,6 +33,7 @@
 
   ## CI
   services.garnix.enable = true;
+  services.nix-ci.enable = true;
 
   ## publishing
   services = {

@@ -110,17 +110,22 @@
         localPackages {inherit pkgs;}
         // {default = self.packages.${system}.escape;};
 
-      projectConfigurations =
-        flaky.lib.projectConfigurations.nix {inherit pkgs self;};
+      projectConfigurations = flaky.lib.projectConfigurations.nix {
+        inherit pkgs self supportedSystems;
+      };
 
       devShells =
         self.projectConfigurations.${system}.devShells
         // {
-          default = self.devShells.${system}.escape;
+          default = self.devShells.${system}.escape.overrideAttrs (old: {
+            nativeBuildInputs =
+              old.nativeBuildInputs or []
+              ++ [self.projectConfigurations.${system}.config.project.packages.path];
+          });
 
           escape = self.packages.${system}.escape.overrideAttrs (old: {
             nativeBuildInputs =
-              old.nativeBuildInputs
+              old.nativeBuildInputs or []
               ++ [
                 ## This gives us a Python with tkinter, so we can use IDLE, as
                 ## recommeded by the book.
@@ -142,9 +147,10 @@
   inputs = {
     ## Flaky should generally be the source of truth for its inputs.
     flaky.url = "github:sellout/flaky";
-
-    flake-utils.follows = "flaky/flake-utils";
     nixpkgs.follows = "flaky/nixpkgs";
-    systems.follows = "flaky/systems";
+
+    ## Pygame seems to not compile on i686-linux.
+    flake-utils.url = "github:numtide/flake-utils";
+    systems.follows = "flake-utils/systems";
   };
 }

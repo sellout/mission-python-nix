@@ -40,7 +40,10 @@
     flakehub.enable = true;
     github = {
       enable = true;
-      settings.repository.topics = ["educational" "python" "book"];
+      settings.repository = {
+        private = false;
+        topics = ["educational" "python" "book"];
+      };
     };
   };
 }

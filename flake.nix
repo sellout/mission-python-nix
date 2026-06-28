@@ -128,8 +128,9 @@
               old.nativeBuildInputs or []
               ++ [
                 ## This gives us a Python with tkinter, so we can use IDLE, as
-                ## recommeded by the book.
-                pkgs.python3Full
+                ## recommeded by the book. (`python3Full` was removed from
+                ## Nixpkgs; tkinter is now added explicitly.)
+                (pkgs.python3.withPackages (ps: [ps.tkinter]))
               ];
 
             shellHook = ''
